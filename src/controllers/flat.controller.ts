@@ -1,7 +1,7 @@
 import { NextFunction, Request, RequestHandler, Response } from 'express'
 
-import { FlatModel } from '../models/flat.model'
-import { IFlat } from '../types/flat.interface'
+import { IFiltersBody, IFlat } from '../types/flat.interface'
+import { flatService } from '../services/flat.service'
 
 class FlatController {
 	getFlats: RequestHandler<Record<any, string>, Array<IFlat>> = async (
@@ -9,13 +9,8 @@ class FlatController {
 		res: Response,
 		next: NextFunction
 	) => {
-		const { page } = req.query
-
-		const limit: number = 5
-		const skip: number = page ? (Number(page) - 1) * limit : 0
-
-		const flats = await FlatModel.find().skip(skip).limit(limit)
-
+		const { page, sort } = req.query
+		const flats = await flatService.allFlats(Number(page), String(sort))
 		res.send(flats)
 		try {
 		} catch (error) {
@@ -30,15 +25,12 @@ class FlatController {
 	) => {
 		try {
 			const { floor } = req.params
-			const { page } = req.query
-
-			const limit: number = 5
-			const skip: number = page ? (Number(page) - 1) * limit : 0
-
-			const flats = await FlatModel.find({ floor: Number(floor) })
-				.skip(skip)
-				.limit(limit)
-
+			const { page, sort } = req.query
+			const flats = await flatService.floorFlats(
+				Number(floor),
+				Number(page),
+				String(sort)
+			)
 			res.send(flats)
 		} catch (error) {
 			res.send(error)
@@ -52,14 +44,28 @@ class FlatController {
 	) => {
 		try {
 			const { id } = req.params
-
-			const flats = await FlatModel.findById(id)
-
-			res.send(flats)
+			const flat = await flatService.oneFlat(id)
+			res.send(flat)
 		} catch (error) {
 			next(error)
 		}
 	}
+
+	getfiltered: RequestHandler<Record<any, string>, IFlat, IFiltersBody> =
+		async (req: Request, res: Response, next: NextFunction) => {
+			try {
+				const body = req.body
+				const { page, sort } = req.query
+				const flats = await flatService.filtered(
+					body,
+					Number(page),
+					String(sort)
+				)
+				res.send(flats)
+			} catch (error) {
+				next(error)
+			}
+		}
 }
 
 export const flatController = new FlatController()
