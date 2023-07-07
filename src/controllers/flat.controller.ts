@@ -1,10 +1,10 @@
 import { NextFunction, Request, RequestHandler, Response } from 'express'
 
-import { IFiltersBody, IFlat } from '../types/flat.interface'
 import { flatService } from '../services/flat.service'
 
+
 class FlatController {
-	getFlats: RequestHandler<Record<any, string>, Array<IFlat>> = async (
+	getFlats: RequestHandler = async (
 		req: Request,
 		res: Response,
 		next: NextFunction
@@ -18,7 +18,7 @@ class FlatController {
 		}
 	}
 
-	getFloorFlats: RequestHandler<Record<any, string>, Array<IFlat>> = async (
+	getFloorFlats: RequestHandler = async (
 		req: Request,
 		res: Response,
 		next: NextFunction
@@ -37,7 +37,7 @@ class FlatController {
 		}
 	}
 
-	getFlat: RequestHandler<Record<any, string>, IFlat> = async (
+	getFlat: RequestHandler = async (
 		req: Request,
 		res: Response,
 		next: NextFunction
@@ -51,21 +51,20 @@ class FlatController {
 		}
 	}
 
-	getfiltered: RequestHandler<Record<any, string>, IFlat, IFiltersBody> =
-		async (req: Request, res: Response, next: NextFunction) => {
-			try {
-				const body = req.body
-				const { page, sort } = req.query
-				const flats = await flatService.filtered(
-					body,
-					Number(page),
-					String(sort)
-				)
-				res.send(flats)
-			} catch (error) {
-				next(error)
-			}
+	getfiltered: RequestHandler = async (
+		req: Request,
+		res: Response,
+		next: NextFunction
+	) => {
+		try {
+			const body = req.body
+			const { page, sort } = req.query
+			const flats = await flatService.filtered(body, Number(page), String(sort))
+			res.send(flats)
+		} catch (error) {
+			next(error)
 		}
+	}
 }
 
 export const flatController = new FlatController()

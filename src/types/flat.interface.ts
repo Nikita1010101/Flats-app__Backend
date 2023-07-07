@@ -20,3 +20,8 @@ export interface IFiltersBody {
 	area_kitchen_params: [number, number]
 	area_live_params: [number, number]
 }
+
+// export interface IRequsetQuery {
+// 	page: string
+// 	sort: string
+// }
