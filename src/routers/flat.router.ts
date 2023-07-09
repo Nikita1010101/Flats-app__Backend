@@ -8,6 +8,7 @@ const router = Router()
 router.get('/', flatController.getFlats)
 router.get('/floor/:floor', flatController.getFloorFlats)
 router.get('/flat/:id', flatController.getFlat)
+router.get('/flats-count/:floor', flatController.getFlatsCount)
 
 router.post('/filters', flatController.getfiltered)
 

@@ -2,7 +2,6 @@ import { NextFunction, Request, RequestHandler, Response } from 'express'
 
 import { flatService } from '../services/flat.service'
 
-
 class FlatController {
 	getFlats: RequestHandler = async (
 		req: Request,
@@ -46,6 +45,20 @@ class FlatController {
 			const { id } = req.params
 			const flat = await flatService.oneFlat(id)
 			res.send(flat)
+		} catch (error) {
+			next(error)
+		}
+	}
+
+	getFlatsCount: RequestHandler = async (
+		req: Request,
+		res: Response,
+		next: NextFunction
+	) => {
+		try {
+			const { floor } = req.params
+			const faltsCount = await flatService.flatsCount(Number(floor))
+			res.send(String(faltsCount))
 		} catch (error) {
 			next(error)
 		}
