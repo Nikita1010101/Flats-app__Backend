@@ -2,35 +2,25 @@ import { SortOrder } from 'mongoose'
 import { FlatModel } from '../models/flat.model'
 import { IFiltersBody, IFlat } from '../types/flat.interface'
 
-class FlatService {
+class FlatServiceClass {
 	public readonly limit_params: number = 5
 
-	async allFlats(page: number, sort: string): Promise<Array<Partial<IFlat>>> {
-		const skip_params: number = page ? (page - 1) * this.limit_params : 0
+	async allFlats(
+		page: number,
+		sort: string,
+		count: string
+	): Promise<Partial<IFlat>[] | string> {
+		const skip_params: number = page 
+			? (page - 1) * this.limit_params
+			: 0
+		const limit_params = page ? this.limit_params : 0
 		const [key, value] = sort.split(' ') as [string, SortOrder]
 		const sort_params = key && value ? { [key]: value } : ''
 		const flats = await FlatModel.find()
 			.skip(skip_params)
-			.limit(this.limit_params)
+			.limit(limit_params)
 			.sort(sort_params)
-		return flats
-	}
-
-	async floorFlats(
-		floor: number,
-		page: number,
-		sort: string
-	): Promise<Array<Partial<IFlat>>> {
-		const skip_params: number = page
-			? (Number(page) - 1) * this.limit_params
-			: 0
-		const [key, value] = sort.split(' ') as [string, SortOrder]
-		const sort_params = key && value ? { [key]: value } : ''
-		const flats = await FlatModel.find({ floor: Number(floor) })
-			.skip(skip_params)
-			.sort(sort_params)
-			.limit(this.limit_params)
-		return flats
+		return count === 'true' ? String(flats.length) : flats
 	}
 
 	async oneFlat(id: string): Promise<Partial<IFlat> | null> {
@@ -38,17 +28,11 @@ class FlatService {
 		return flat
 	}
 
-	async flatsCount(floor: number): Promise<number> {
-		const search_params = floor !== 0 ? { floor } : {}
-		const flats_count = await FlatModel.find(search_params).count()
-		return flats_count
-	}
-
 	async filtered(
 		body: IFiltersBody,
 		page: number,
 		sort: string
-	): Promise<Array<Partial<IFlat>>> {
+	): Promise<Partial<IFlat>[] | string> {
 		const {
 			floor_params,
 			price_params,
@@ -97,15 +81,18 @@ class FlatService {
 				}
 			]
 		}
-		const skip: number = page ? (Number(page) - 1) * this.limit_params : 0
+		const skip_params: number = page
+			? (page - 1) * this.limit_params
+			: 0
+		const limit_params = page ? this.limit_params : 0
 		const [key, value] = sort.split(' ') as [string, SortOrder]
 		const sort_params = key && value ? { [key]: value } : ''
 		const flats = await FlatModel.find(sortParams)
-			.skip(skip)
+			.skip(skip_params)
 			.sort(sort_params)
-			.limit(this.limit_params)
-		return flats
+			.limit(limit_params)
+		return page ? flats : String(flats.length)
 	}
 }
 
-export const flatService = new FlatService()
+export const FlatService = new FlatServiceClass()

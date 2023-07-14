@@ -1,15 +1,13 @@
 import { Router } from 'express'
 
-import { flatController } from '../controllers/flat.controller'
+import { FlatController } from '../controllers/flat.controller'
 
 
 const router = Router()
 
-router.get('/', flatController.getFlats)
-router.get('/floor/:floor', flatController.getFloorFlats)
-router.get('/flat/:id', flatController.getFlat)
-router.get('/flats-count/:floor', flatController.getFlatsCount)
+router.get('/', FlatController.getAllFlats)
+router.get('/flat/:id', FlatController.getOneFlat)
 
-router.post('/filters', flatController.getfiltered)
+router.post('/filters', FlatController.getfiltered)
 
-export const mainRouter = router
+export const MainRouter = router

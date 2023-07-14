@@ -1,15 +1,19 @@
 import { NextFunction, Request, RequestHandler, Response } from 'express'
 
-import { flatService } from '../services/flat.service'
+import { FlatService } from '../services/flat.service'
 
-class FlatController {
-	getFlats: RequestHandler = async (
+class FlatControllerClass {
+	getAllFlats: RequestHandler = async (
 		req: Request,
 		res: Response,
 		next: NextFunction
 	) => {
-		const { page, sort } = req.query
-		const flats = await flatService.allFlats(Number(page), String(sort))
+		const { _page, _sort, _count } = req.query
+		const flats = await FlatService.allFlats(
+			Number(_page),
+			String(_sort),
+			String(_count)
+		)
 		res.send(flats)
 		try {
 		} catch (error) {
@@ -17,48 +21,15 @@ class FlatController {
 		}
 	}
 
-	getFloorFlats: RequestHandler = async (
-		req: Request,
-		res: Response,
-		next: NextFunction
-	) => {
-		try {
-			const { floor } = req.params
-			const { page, sort } = req.query
-			const flats = await flatService.floorFlats(
-				Number(floor),
-				Number(page),
-				String(sort)
-			)
-			res.send(flats)
-		} catch (error) {
-			res.send(error)
-		}
-	}
-
-	getFlat: RequestHandler = async (
+	getOneFlat: RequestHandler = async (
 		req: Request,
 		res: Response,
 		next: NextFunction
 	) => {
 		try {
 			const { id } = req.params
-			const flat = await flatService.oneFlat(id)
+			const flat = await FlatService.oneFlat(id)
 			res.send(flat)
-		} catch (error) {
-			next(error)
-		}
-	}
-
-	getFlatsCount: RequestHandler = async (
-		req: Request,
-		res: Response,
-		next: NextFunction
-	) => {
-		try {
-			const { floor } = req.params
-			const faltsCount = await flatService.flatsCount(Number(floor))
-			res.send(String(faltsCount))
 		} catch (error) {
 			next(error)
 		}
@@ -71,8 +42,12 @@ class FlatController {
 	) => {
 		try {
 			const body = req.body
-			const { page, sort } = req.query
-			const flats = await flatService.filtered(body, Number(page), String(sort))
+			const { _page, _sort } = req.query
+			const flats = await FlatService.filtered(
+				body,
+				Number(_page),
+				String(_sort)
+			)
 			res.send(flats)
 		} catch (error) {
 			next(error)
@@ -80,4 +55,4 @@ class FlatController {
 	}
 }
 
-export const flatController = new FlatController()
+export const FlatController = new FlatControllerClass()
