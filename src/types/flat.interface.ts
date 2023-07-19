@@ -12,16 +12,17 @@ export interface IFlat {
 	layout_image: string
 }
 
-export interface IFiltersBody {
-	floor_params: [number, number]
-	price_params: [number, number]
-	rooms_params: [number, number]
-	area_total_params: [number, number]
-	area_kitchen_params: [number, number]
-	area_live_params: [number, number]
+export interface IFilters {
+	floor_from: number
+	floor_to: number
+	rooms_from: number
+	rooms_to: number
+	area_total_from: number
+	area_total_to: number
+	area_live_from: number
+	area_live_to: number
+	area_kitchen_from: number
+	area_kitchen_to: number
+	price_from: number
+	price_to: number
 }
-
-// export interface IRequsetQuery {
-// 	page: string
-// 	sort: string
-// }
