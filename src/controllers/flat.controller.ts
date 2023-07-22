@@ -1,6 +1,11 @@
 import { NextFunction, Request, RequestHandler, Response } from 'express'
 
 import { FlatService } from '../services/flat.service'
+import {
+	IFilterParams,
+	ISortParams,
+	TQueryParams
+} from '../types/flat.interface'
 
 class FlatControllerClass {
 	getAllFlats: RequestHandler = async (
@@ -9,8 +14,10 @@ class FlatControllerClass {
 		next: NextFunction
 	) => {
 		try {
-			const { _page } = req.query
-			const flats = await FlatService.allFlats(Number(_page))
+			const { _page, _sort, ...filters } = req.query as TQueryParams<
+				ISortParams & IFilterParams
+			>
+			const flats = await FlatService.allFlats(_page, _sort, filters)
 			res.send(flats)
 		} catch (error) {
 			next(error)
@@ -23,7 +30,7 @@ class FlatControllerClass {
 		next: NextFunction
 	) => {
 		try {
-			const { id } = req.params
+			const { id } = req.params as { id: string }
 			const flat = await FlatService.oneFlat(id)
 			res.send(flat)
 		} catch (error) {
@@ -37,28 +44,9 @@ class FlatControllerClass {
 		next: NextFunction
 	) => {
 		try {
-			const body = req.body
-			const count = await FlatService.count(body)
+			const { ...filters } = req.query as TQueryParams<IFilterParams>
+			const count = await FlatService.count(filters)
 			res.send(count)
-		} catch (error) {
-			next(error)
-		}
-	}
-
-	getfiltered: RequestHandler = async (
-		req: Request,
-		res: Response,
-		next: NextFunction
-	) => {
-		try {
-			const body = req.body
-			const { _page, _sort } = req.query
-			const flats = await FlatService.filtered(
-				Number(_page),
-				String(_sort),
-				body
-			)
-			res.send(flats)
 		} catch (error) {
 			next(error)
 		}

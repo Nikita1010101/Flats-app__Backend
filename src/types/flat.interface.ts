@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb"
+import { ObjectId } from 'mongodb'
 
 export interface IFlat {
 	_id: ObjectId
@@ -12,17 +12,22 @@ export interface IFlat {
 	layout_image: string
 }
 
-export interface IFilters {
-	floor_from: number
-	floor_to: number
-	rooms_from: number
-	rooms_to: number
-	area_total_from: number
-	area_total_to: number
-	area_live_from: number
-	area_live_to: number
-	area_kitchen_from: number
-	area_kitchen_to: number
-	price_from: number
-	price_to: number
+export interface ParsedQs {
+	[key: string]: undefined | string | string[] | ParsedQs | ParsedQs[]
 }
+
+export interface ISortParams {
+	_page: number
+	_sort: string
+}
+
+export interface IFilterParams {
+	_floor: string
+	_rooms: string
+	_area_total: string
+	_area_live: string
+	_area_kitchen: string
+	_price: string
+}
+
+export type TQueryParams<TParams> = TParams & ParsedQs

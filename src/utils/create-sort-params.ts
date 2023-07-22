@@ -1,6 +1,10 @@
 import { SortOrder } from 'mongoose'
 
 export const createSortParams = (sort: string) => {
+	if (!sort) {
+		return ''
+	}
+
 	const [key, value] = sort.split(' ') as [string, SortOrder]
 
 	if (key && value) {
@@ -8,5 +12,5 @@ export const createSortParams = (sort: string) => {
 		return sort_params
 	}
 
-  return ''
+	return ''
 }
